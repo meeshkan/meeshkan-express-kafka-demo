@@ -12,7 +12,7 @@
     "@oclif/config" "^1"
     "@oclif/plugin-help" "^2"
     debug "^4.1.1"
-    http-types "^0.4.0"
+    http-types "^0.5.0"
     kafkajs "^1.12.0"
     tslib "^1"
 
@@ -389,10 +389,10 @@ http-errors@~1.7.2:
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
-http-types@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/http-types/-/http-types-0.4.0.tgz#f0cdfa7e49efd7a7a2e166a09ddcd10435ec9c84"
-  integrity sha512-C1XXJjjOK7/lK4Db322Lf9ikRifaCCZWphslsLNsNrOQsK68ylOhUk4fLIV+JU62cijJjY319xwo3c5iwl+v2A==
+http-types@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/http-types/-/http-types-0.5.0.tgz#9e02637d2e7454e46550e2568527bb3af1dd3b40"
+  integrity sha512-miAWi7LdP3eONtxVC5Q0Co2kq2AR35JLavMtW6Pja17O4oywUL1Jctnex/qEuL98LedTfMugtGDU21ABHuEjgw==
 
 iconv-lite@0.4.24:
   version "0.4.24"

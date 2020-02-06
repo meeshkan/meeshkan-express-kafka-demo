@@ -1,6 +1,6 @@
 import express = require("express");
 import debug = require("debug");
-import httpExpress from "@meeshkaml/express-middleware";
+import httpExpress from "@meeshkanml/express-middleware";
 import * as kafka from "@meeshkanml/http-types-kafka";
 import { HttpExchange } from "http-types";
 
