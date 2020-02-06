@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@meeshkaml/express-middleware@file:../express-middleware":
+"@meeshkanml/express-middleware@file:../express-middleware":
   version "0.0.0"
 
 "@meeshkanml/http-types-kafka@file:../http-types-kafka":

@@ -10,7 +10,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@meeshkaml/express-middleware": "file:../express-middleware",
+    "@meeshkanml/express-middleware": "file:../express-middleware",
     "@meeshkanml/http-types-kafka": "file:../http-types-kafka",
     "debug": "^4.1.1",
     "express": "^4.17.1",
