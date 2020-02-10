@@ -5,8 +5,10 @@
 "@meeshkanml/express-middleware@file:../express-middleware":
   version "0.0.0"
 
-"@meeshkanml/http-types-kafka@file:../http-types-kafka":
+"@meeshkanml/http-types-kafka@^0.0.0":
   version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@meeshkanml/http-types-kafka/-/http-types-kafka-0.0.0.tgz#6610512446308b3f2d7720e4e37f67632a4dbfeb"
+  integrity sha512-Os7DVDahBEWrxsLw7UGXjX6C6goN6iRyOtq4fTqM/oWj7vHSGLV4oathX5Ay7t4+6Fnao2B1m35jQQesrmU9ag==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"

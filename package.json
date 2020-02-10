@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@meeshkanml/express-middleware": "file:../express-middleware",
-    "@meeshkanml/http-types-kafka": "file:../http-types-kafka",
+    "@meeshkanml/http-types-kafka": "^0.0.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "http-types": "^0.5.0"
