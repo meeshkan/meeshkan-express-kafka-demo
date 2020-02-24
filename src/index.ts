@@ -6,7 +6,7 @@ import { HttpExchange } from "http-types";
 
 const debugLog = debug("express-app");
 
-const KAFKA_TOPIC = "express_recordings";
+const KAFKA_TOPIC = "http_recordings";
 const KAFKA_CONFIG: kafka.KafkaConfig = {
   brokers: ["localhost:9092"],
 };

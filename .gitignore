@@ -1,3 +1,5 @@
 node_modules/
 .vscode/
 dist/
+# Kafka data
+zk-single-kafka-single/
