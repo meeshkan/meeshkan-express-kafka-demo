@@ -8,6 +8,7 @@
     "@types/express": "^4.17.2",
     "cross-env": "^7.0.0",
     "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
   "dependencies": {
@@ -19,6 +20,6 @@
   },
   "scripts": {
     "compile": "tsc",
-    "start": "yarn compile && cross-env DEBUG=* node dist/index.js"
+    "start": "cross-env DEBUG=* ts-node src/index.ts"
   }
 }
