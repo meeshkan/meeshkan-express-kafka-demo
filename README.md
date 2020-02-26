@@ -13,7 +13,7 @@ $ yarn
 Start local Kafka cluster using Docker with [zk-single-kafka-single.yml](./zk-single-kafka-single.yml) copied from [this repository](https://github.com/simplesteph/kafka-stack-docker-compose):
 
 ```bash
-$ docker-compose up zk-single-kafka-single.yml -f
+$ docker-compose -f zk-single-kafka-single.yml up -d
 ```
 
 Create the destination topic:
@@ -40,10 +40,16 @@ Start console consumer to read messages from Kafka:
 $ docker exec kafka1 kafka-console-consumer --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
 ```
 
-Alternatively, if you use `kafkacat`:
+Alternatively, if you use [`kafkacat`](https://github.com/edenhill/kafkacat):
 
 ```bash
 $ kafkacat -b localhost:9092 -t http_recordings -C
+```
+
+Finally, tear down Docker:
+
+```bash
+$ docker-compose -f zk-single-kafka-single.yml down
 ```
 
 ## Miscellaneous

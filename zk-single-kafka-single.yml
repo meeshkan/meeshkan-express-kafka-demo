@@ -1,11 +1,12 @@
-# Copied from
+# Modified from
 # https://github.com/simplesteph/kafka-stack-docker-compose
-# Comments added by K.S.
+# Comments, container names, etc. added by K.S.
 version: "2.1"
 
 services:
   zoo1:
     image: zookeeper:3.4.9
+    container_name: zoo1
     hostname: zoo1
     ports:
       - "2181:2181"
@@ -16,9 +17,9 @@ services:
     volumes:
       - ./zk-single-kafka-single/zoo1/data:/data
       - ./zk-single-kafka-single/zoo1/datalog:/datalog
-
   kafka1:
     image: confluentinc/cp-kafka:5.4.0
+    container_name: kafka1
     hostname: kafka1
     ports:
       - "9092:9092"
