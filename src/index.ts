@@ -4,6 +4,7 @@ import httpExpress from "@meeshkanml/express-middleware";
 import * as kafka from "@meeshkanml/http-types-kafka";
 import { v4 as uuidv4 } from "uuid";
 import { HttpExchange } from "http-types";
+import * as url from "url";
 
 const debugLog = debug("express-app");
 
@@ -46,11 +47,19 @@ class UserStore {
 }
 
 const parseCreateUserInput = (body: any): CreateUserInput => {
+  if (typeof body.name !== "string") {
+    throw Error(`Bad name: ${body.name}`);
+  }
+  if (typeof body.email !== "string") {
+    throw Error(`Bad email: ${body.email}`);
+  }
   return {
     name: body.name,
     email: body.email,
   };
 };
+
+const USERS_ROUTE = "/users";
 
 const usersRouter = (userStore: UserStore): express.Router => {
   const router = express.Router();
@@ -58,18 +67,25 @@ const usersRouter = (userStore: UserStore): express.Router => {
   router.post("/", (req: express.Request, res: express.Response) => {
     // Handle post user
     let userInput: CreateUserInput;
+    debugLog("Incoming post user", req.body);
     try {
       userInput = parseCreateUserInput(req.body);
     } catch (err) {
-      return res.sendStatus(404);
+      debugLog("Bad request", err, req.body);
+      return res.sendStatus(400);
     }
     const newUser = userStore.createUser(userInput);
+    // Set Location for client-navigation
+    res.location(`${USERS_ROUTE}/${newUser.id}`);
     return res.json(newUser);
   });
 
   router.get("/:userId", (req: express.Request, res: express.Response) => {
     // Handle get user
     const userId = req.params.userId;
+    if (typeof userId !== "string") {
+      return res.sendStatus(400);
+    }
     const maybeUser = userStore.getUserById(userId);
     if (maybeUser) {
       return res.json(maybeUser);
@@ -99,7 +115,7 @@ const buildApp = (kafkaTransport: kafka.HttpTypesKafkaProducer) => {
 
   const userStore = new UserStore();
 
-  app.use("/users", usersRouter(userStore));
+  app.use(USERS_ROUTE, usersRouter(userStore));
 
   return app;
 };
