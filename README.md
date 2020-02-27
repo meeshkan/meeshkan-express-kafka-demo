@@ -67,6 +67,20 @@ $ curl -X POST -d '{"name": "Kimmo", "email": "kimmo@example.com" }' -H "Content
 $ curl http://localhost:3000/users/5720862f-9534-4d97-8afe-c07f38a728b7
 ```
 
+To create an OpenAPI specification from recordings, install [`meeshkan`](https://pypi.org/project/meeshkan/):
+
+```bash
+$ pip install meeshkan
+```
+
+and run the following command:
+
+```bash
+$ meeshkan build --source kafka -o my_spec
+```
+
+`meeshkan` writes the OpenAPI specification to `my_spec/` directory.
+
 Finally, close the Express server and tear down Docker:
 
 ```bash

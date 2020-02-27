@@ -278,7 +278,91 @@ Our Kafka console consumer should print HTTP exchanges line by line, showing we'
 {"request":{"method":"post","protocol":"http","host":"localhost","headers":{"host":"localhost:3000","user-agent":"curl/7.54.0","accept":"*/*","content-type":"application/json","content-length":"48"},"body":"{\"name\":\"Kimmo\",\"email\":\"kimmo@example.com\"}","path":"/","pathname":"/","query":{}},"response":{"statusCode":200,"headers":{"x-powered-by":"Express","location":"users/4b5be6a1-d8fc-4d88-8626-f02d2bb6a2ce","content-type":"application/json; charset=utf-8","content-length":"88","etag":"W/\"58-UlPz3KdpdSQ1q3AlXhHJG4COjFQ\""},"body":"{\"id\":\"4b5be6a1-d8fc-4d88-8626-f02d2bb6a2ce\",\"name\":\"Kimmo\",\"email\":\"kimmo@example.com\"}"}}
 ```
 
-### Example: read recordings to create a specification
+## Creating OpenAPI specification from recordings
+
+As a use case for our HTTP recordings, we'll use the recordings to create an [OpenAPI](https://swagger.io/specification/) specification from the recordings using [`meeshkan`](https://github.com/Meeshkan/meeshkan) Python tool. OpenAPI specification acts as a contract specifying the API endpoints and what data they consume or produce, and you can use it for documentation or testing.
+
+To get started, install `meeshkan` from [PyPI](https://pypi.org/project/meeshkan/):
+
+```bash
+$ pip install meeshkan
+```
+
+To create an OpenAPI specification to directory `my_spec/`, run the following command:
+
+```bash
+$ meeshkan build --source kafka -o my_spec
+```
+
+`meeshkan` will update the OpenAPI specification in memory whenever new data arrives in `http_recordings` topic. Stop `meeshkan` with `Ctrl+C` and the specification is written to `my_spec` directory with an `openapi.json` as follows:
+
+```json
+{
+  "openapi": "3.0.0",
+  "info": { "title": "API title", "version": "1.0", "description": "API description" },
+  "paths": {
+    "/non-existent": {
+      "summary": "Path summary",
+      "description": "Path description",
+      "get": {
+        "responses": {
+          "404": {
+            "description": "Response description",
+            "headers": {},
+            "content": { "text/plain": { "schema": { "type": "string" } } },
+            "links": {}
+          }
+        },
+        "summary": "Operation summary",
+        "description": "Operation description",
+        "operationId": "id",
+        "parameters": [
+          { "name": "user-agent", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "accept", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "host", "in": "header", "required": false, "schema": { "type": "string" } }
+        ]
+      }
+    },
+    "/": {
+      "summary": "Path summary",
+      "description": "Path description",
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Response description",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": ["email", "id", "name"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "email": { "type": "string" }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "links": {}
+          }
+        },
+        "summary": "Operation summary",
+        "description": "Operation description",
+        "operationId": "id",
+        "parameters": [
+          { "name": "content-length", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "accept", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "host", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "user-agent", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "content-type", "in": "header", "required": false, "schema": { "type": "string" } }
+        ]
+      }
+    }
+  },
+  "servers": [{ "url": "http://localhost" }]
+}
+```
 
 ## Conclusion
 
