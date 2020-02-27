@@ -214,7 +214,7 @@ Before starting our server, we need to start Kafka. If you prefer to install Kaf
 Using Docker Compose, you can start the Kafka cluster with
 
 ```bash
-docker-compose -f zk-single-kafka-single.yml up -d
+$ docker-compose -f zk-single-kafka-single.yml up -d
 ```
 
 This starts Zookeeper and Kafka in the background. Data is persisted in the `zk-single-kafka-single/` directory. Kafka broker is listening at port 9092 published also by Docker.
@@ -234,9 +234,9 @@ To see messages arriving to Kafka, start a console consumer consuming `http_reco
 
 ```bash
 # If you have Kafka installed
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
+$ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
 # If you're using Docker
-docker exec kafka1 kafka-console-consumer --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
+$ docker exec kafka1 kafka-console-consumer --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
 ```
 
 ### Recording calls
@@ -271,32 +271,12 @@ $ export USER_ID=`curl -X POST -d '{"name": "Kimmo", "email": "kimmo@example.com
 $ curl http://localhost:3000/users/${USER_ID}
 ```
 
-Our Kafka console consumer should print following kind of output, showing we're successfully recording:
+Our Kafka console consumer should print HTTP exchanges line by line, showing we're successfully recording:
 
 ```bash
-
+{"request":{"method":"get","protocol":"http","host":"localhost","headers":{"host":"localhost:3000","user-agent":"curl/7.54.0","accept":"*/*"},"body":"{}","path":"/non-existent","pathname":"/non-existent","query":{}},"response":{"statusCode":404,"headers":{"x-powered-by":"Express","content-type":"text/plain; charset=utf-8","content-length":"9","etag":"W/\"9-0gXL1ngzMqISxa6S1zx3F4wtLyg\""},"body":"Not Found"}}
+{"request":{"method":"post","protocol":"http","host":"localhost","headers":{"host":"localhost:3000","user-agent":"curl/7.54.0","accept":"*/*","content-type":"application/json","content-length":"48"},"body":"{\"name\":\"Kimmo\",\"email\":\"kimmo@example.com\"}","path":"/","pathname":"/","query":{}},"response":{"statusCode":200,"headers":{"x-powered-by":"Express","location":"users/4b5be6a1-d8fc-4d88-8626-f02d2bb6a2ce","content-type":"application/json; charset=utf-8","content-length":"88","etag":"W/\"58-UlPz3KdpdSQ1q3AlXhHJG4COjFQ\""},"body":"{\"id\":\"4b5be6a1-d8fc-4d88-8626-f02d2bb6a2ce\",\"name\":\"Kimmo\",\"email\":\"kimmo@example.com\"}"}}
 ```
-
-### HTTP traffic is valuable
-
-- HTTP traffic is valuable data
-- HTTP traffic is high volume -> made for Kafka
-- http-types is a convenient format for logging HTTP traffic
-
-- You'll learn a bit Node.js
-- You'll learn how to start Kafka
-
-- Create an Express server
-- Add middleware logging to Kafka in http-types format
-- Show an example application creating OpenAPI specs on the fly
-
-## Middle
-
-### Create a Node.js server
-
-### Start Kafka
-
-### Start recording
 
 ### Example: read recordings to create a specification
 
