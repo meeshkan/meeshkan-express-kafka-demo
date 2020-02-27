@@ -59,8 +59,6 @@ const parseCreateUserInput = (body: any): CreateUserInput => {
   };
 };
 
-const USERS_ROUTE = "/users";
-
 const usersRouter = (userStore: UserStore): express.Router => {
   const router = express.Router();
 
@@ -76,7 +74,7 @@ const usersRouter = (userStore: UserStore): express.Router => {
     }
     const newUser = userStore.createUser(userInput);
     // Set Location for client-navigation
-    res.location(`${USERS_ROUTE}/${newUser.id}`);
+    res.location(`users/${newUser.id}`);
     return res.json(newUser);
   });
 
@@ -102,20 +100,20 @@ const buildApp = (kafkaTransport: kafka.HttpTypesKafkaProducer) => {
 
   app.use(express.json());
 
-  const transport = async (exchange: HttpExchange) => {
+  const kafkaExchangeTransport = async (exchange: HttpExchange) => {
     debugLog("Sending an exchange to Kafka");
     await kafkaTransport.send(exchange);
   };
 
-  app.use(
-    httpExpress({
-      transports: [transport],
-    })
-  );
+  const kafkaExchangeMiddleware = httpExpress({
+    transports: [kafkaExchangeTransport],
+  });
+
+  app.use(kafkaExchangeMiddleware);
 
   const userStore = new UserStore();
 
-  app.use(USERS_ROUTE, usersRouter(userStore));
+  app.use("/users", usersRouter(userStore));
 
   return app;
 };
