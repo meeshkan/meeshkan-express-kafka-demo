@@ -207,7 +207,75 @@ Create user request is handled by first validating the user input. Creating a ne
 
 Fetching a user proceeds similarly: the user ID given in the route must be a string, after which a user is fetched from `userStore.getUserbyId`. The store returns `undefined` if the user is not found, so that's converted to a response with status code 404.
 
-## Running Kafka
+## Preparing Kafka
+
+Before starting our server, we need to start Kafka. If you prefer to install Kafka on your own machine, you can follow the instructions in [Kafka Quick Start](https://kafka.apache.org/quickstart). Alternatively, you can use Docker. The accompanying [repository](https://github.com/Meeshkan/meeshkan-express-kafka-demo) has a Docker Compose file [zk-single-kafka-single.yml](https://github.com/meeshkan/meeshkan-express-kafka-demo/blob/master/zk-single-kafka-single.yml). As the name implies, it starts a single instance of Zookeeper and single instance of Kafka, which is sufficient for our purposes. The Docker Compose file has been copied with small modifications from [this repository](https://github.com/simplesteph/kafka-stack-docker-compose).
+
+Using Docker Compose, you can start the Kafka cluster with
+
+```bash
+docker-compose -f zk-single-kafka-single.yml up -d
+```
+
+This starts Zookeeper and Kafka in the background. Data is persisted in the `zk-single-kafka-single/` directory. Kafka broker is listening at port 9092 published also by Docker.
+
+Now we need to create a Kafka topic for our recordings. Run one of the following commands to create a topic named `http_recordings`, depending on whether you have Kafka tools installed or not:
+
+```bash
+# If you have Kafka installed
+$ bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic http_recordings --create --partitions 3 --replication-factor 1
+# If you're using Docker
+$ docker exec kafka1 kafka-topics --bootstrap-server localhost:9092 --topic http_recordings --create --partitions 3 --replication-factor 1
+```
+
+The latter command executes `kafka-topics` command inside the `kafka1` container started by Docker Compose.
+
+To see messages arriving to Kafka, start a console consumer consuming `http_recordings` topic:
+
+```bash
+# If you have Kafka installed
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
+# If you're using Docker
+docker exec kafka1 kafka-console-consumer --bootstrap-server localhost:9092 --topic http_recordings --from-beginning
+```
+
+### Recording calls
+
+Now we're ready to start our server and make some calls! You can start the server with
+
+```bash
+$ yarn start
+# OR if using npm
+$ npm run start
+```
+
+Let's now make some calls to `localhost:3000` using `cURL`:
+
+```bash
+# Try fetching a user that does not exist
+$ curl http://localhost:3000/users/non-existent
+# Not found
+
+# Create a user
+$ curl -X POST -d '{"name": "Kimmo", "email": "kimmo@example.com" }' -H "Content-Type: application/json" http://localhost:3000/users
+# {"id":"95768802-5476-4cae-aae4-fb51a6b62ec1","name":"Kimmo","email":"kimmo@example.com"}
+
+# Replace the user ID with the value you got
+$ curl http://localhost:3000/users/95768802-5476-4cae-aae4-fb51a6b62ec1
+# {"id":"95768802-5476-4cae-aae4-fb51a6b62ec1","name":"Kimmo","email":"kimmo@example.com"}
+
+# To save the created user ID to environment variable USER_ID in bash, you can use sed to replace the whole response body with the captured ID:
+$ export USER_ID=`curl -X POST -d '{"name": "Kimmo", "email": "kimmo@example.com" }' -H "Content-Type: application/json" http://localhost:3000/users | sed 's/.*"id":"\([^"]*\)".*/\1/'`
+
+# Get created user by using the environment variable
+$ curl http://localhost:3000/users/${USER_ID}
+```
+
+Our Kafka console consumer should print following kind of output, showing we're successfully recording:
+
+```bash
+
+```
 
 ### HTTP traffic is valuable
 
@@ -235,6 +303,7 @@ Fetching a user proceeds similarly: the user ID given in the route must be a str
 ## Conclusion
 
 - For better performance, you probably want to use a format like Avro
+-
 
 ## How to write
 
