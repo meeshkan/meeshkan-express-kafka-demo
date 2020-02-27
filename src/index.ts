@@ -1,15 +1,14 @@
 import express = require("express");
 import debug = require("debug");
-import httpExpress from "@meeshkanml/express-middleware";
-import * as kafka from "@meeshkanml/http-types-kafka";
+import httpTypesExpressMiddleware from "@meeshkanml/express-middleware";
+import { HttpTypesKafkaProducer, KafkaConfig } from "@meeshkanml/http-types-kafka";
 import { v4 as uuidv4 } from "uuid";
 import { HttpExchange } from "http-types";
-import * as url from "url";
 
 const debugLog = debug("express-app");
 
 const KAFKA_TOPIC = "http_recordings";
-const KAFKA_CONFIG: kafka.KafkaConfig = {
+const KAFKA_CONFIG: KafkaConfig = {
   brokers: ["localhost:9092"],
 };
 const PORT = 3000;
@@ -95,18 +94,13 @@ const usersRouter = (userStore: UserStore): express.Router => {
   return router;
 };
 
-const buildApp = (kafkaTransport: kafka.HttpTypesKafkaProducer) => {
+const buildApp = (exchangeTransport: (exchange: HttpExchange) => Promise<void>) => {
   const app = express();
 
   app.use(express.json());
 
-  const kafkaExchangeTransport = async (exchange: HttpExchange) => {
-    debugLog("Sending an exchange to Kafka");
-    await kafkaTransport.send(exchange);
-  };
-
-  const kafkaExchangeMiddleware = httpExpress({
-    transports: [kafkaExchangeTransport],
+  const kafkaExchangeMiddleware = httpTypesExpressMiddleware({
+    transports: [exchangeTransport],
   });
 
   app.use(kafkaExchangeMiddleware);
@@ -119,11 +113,20 @@ const buildApp = (kafkaTransport: kafka.HttpTypesKafkaProducer) => {
 };
 
 const main = async () => {
-  const kafkaTransport = kafka.HttpTypesKafkaProducer.create({ kafkaConfig: KAFKA_CONFIG, topic: KAFKA_TOPIC });
-  const app = buildApp(kafkaTransport);
+  const httpTypesKafkaProducer = HttpTypesKafkaProducer.create({
+    kafkaConfig: KAFKA_CONFIG,
+    topic: KAFKA_TOPIC,
+  });
+
+  const kafkaExchangeTransport = async (exchange: HttpExchange) => {
+    debugLog("Sending an exchange to Kafka");
+    await httpTypesKafkaProducer.send(exchange);
+  };
+
+  const app = buildApp(kafkaExchangeTransport);
 
   // Prepare
-  await kafkaTransport.connect();
+  await httpTypesKafkaProducer.connect();
 
   app.listen(PORT, "localhost", () => {
     console.log(`Listening at port ${PORT}`);

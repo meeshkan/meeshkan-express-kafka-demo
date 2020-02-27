@@ -23,7 +23,7 @@ To follow along, you should have a recent installation of [Node.js](https://node
 
 ## Creating a Node.js server
 
-We'll create a RESTful server with [Express](https://expressjs.com/). We use Express because it has ready-made [middleware](https://github.com/Meeshkan/express-middleware) for recording traffic logs in [http-types](https://meeshkan.github.io/http-types/) format. HTTP Types is a human-readable JSON format for HTTP exchanges, with a single exchange looking as follows:
+We'll create a RESTful server with [Express](https://expressjs.com/) and record traffic logs in [HTTP Types](https://meeshkan.github.io/http-types/) format. HTTP Types is a human-readable JSON format for HTTP exchanges, with an example exchange looking as follows:
 
 ```json
 {
@@ -50,6 +50,164 @@ We'll create a RESTful server with [Express](https://expressjs.com/). We use Exp
   }
 }
 ```
+
+To log HTTP traffic from Express to Kafka, we'll need (1) a middleware converting Express requests and responses to HTTP Types objects and (2) a transport sending HTTP types objects to Kafka. The first task is handled by [@meeshkanml/express-middleware](https://github.com/Meeshkan/express-middleware) package, and the second by [http-types-kafka](https://github.com/meeshkan/http-types-kafka-node). We'll see below how to put all of these together.
+
+Our server is defined in [src/index.ts](https://github.com/meeshkan/meeshkan-express-kafka-demo/blob/master/src/index.ts). The entrypoint to the program is the `main()` function defined as follows:
+
+```ts
+const KAFKA_TOPIC = "http_recordings";
+const KAFKA_CONFIG: KafkaConfig = {
+  brokers: ["localhost:9092"],
+};
+
+const main = async () => {
+  const httpTypesKafkaProducer = HttpTypesKafkaProducer.create({
+    kafkaConfig: KAFKA_CONFIG,
+    topic: KAFKA_TOPIC,
+  });
+
+  const kafkaExchangeTransport = async (exchange: HttpExchange) => {
+    debugLog("Sending an exchange to Kafka");
+    await httpTypesKafkaProducer.send(exchange);
+  };
+
+  const app = buildApp(kafkaExchangeTransport);
+
+  // Prepare
+  await kafkaTransport.connect();
+
+  app.listen(PORT, "localhost", () => {
+    console.log(`Listening at port ${PORT}`);
+  });
+  app.on("close", () => console.log("Closing express"));
+};
+
+main();
+```
+
+Here we first create a Kafka producer by defining the Kafka topic to write to and the list of brokers consisting only of `localhost:9092`. `http-types-kafka` is a simple wrapper around [kafkajs](https://github.com/tulios/kafkajs), and `KafkaConfig` is defined in `kafkajs`. Transport of HTTP types is a function taking a `HttpExchange` object and returning a promise, defined in our case simply as
+
+```ts
+const kafkaExchangeTransport = async (exchange: HttpExchange) => {
+  debugLog("Sending an exchange to Kafka");
+  await httpTypesKafkaProducer.send(exchange);
+};
+```
+
+In real-world use case, you would want to handle errors more carefully.
+
+The Express `app` is defined in the `buildApp` function
+
+```ts
+import httpTypesExpressMiddleware from "@meeshkanml/express-middleware";
+
+const buildApp = (exchangeTransport: (exchange: HttpExchange) => Promise<void>) => {
+  const app = express();
+
+  app.use(express.json());
+
+  const kafkaExchangeMiddleware = httpTypesExpressMiddleware({
+    transports: [exchangeTransport],
+  });
+
+  app.use(kafkaExchangeMiddleware);
+
+  const userStore = new UserStore();
+
+  app.use("/users", usersRouter(userStore));
+
+  return app;
+};
+```
+
+Here we use `express.json()` middleware to parse request bodies as JSON. Express middleware for logging API traffic is created with the `httpTypesExpressMiddleware` imported from [@meeshkanml/express-middleware](https://www.npmjs.com/package/@meeshkanml/express-middleware) package. The object takes a list of transports as an argument, so you could also send your logs to other destinations such as local file.
+
+The actual user-facing API of our server is mounted on `/users` route defined in `usersRouter`. The function creating the [Express router](https://expressjs.com/en/4x/api.html#router) takes an instance of `UserStore` to access the list of users. For demonstration purposes, we define a simple synchronous in-memory user store as follows:
+
+```ts
+// Representation of user
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface CreateUserInput {
+  name: string;
+  email: string;
+}
+
+class UserStore {
+  private readonly users: Record<string, User> = {};
+  constructor() {}
+
+  getUserById(userId: string): User | undefined {
+    return this.users[userId];
+  }
+
+  createUser(userInput: CreateUserInput): User {
+    const userId = uuidv4();
+    const user: User = {
+      id: userId,
+      name: userInput.name,
+      email: userInput.email,
+    };
+    this.users[userId] = user;
+    return user;
+  }
+}
+```
+
+The store keeps an in-memory dictionary of users by mapping user IDs to `User` objects and exposes `getUserById` and `createUser` methods for getting and creating users.
+
+User requests are handled by our server as follows:
+
+```ts
+const usersRouter = (userStore: UserStore): express.Router => {
+  const router = express.Router();
+
+  router.post("/", (req: express.Request, res: express.Response) => {
+    // Handle post user
+    let userInput: CreateUserInput;
+    debugLog("Incoming post user", req.body);
+    try {
+      userInput = parseCreateUserInput(req.body);
+    } catch (err) {
+      debugLog("Bad request", err, req.body);
+      return res.sendStatus(400);
+    }
+    const newUser = userStore.createUser(userInput);
+    // Set Location for client-navigation
+    res.location(`users/${newUser.id}`);
+    return res.json(newUser);
+  });
+
+  router.get("/:userId", (req: express.Request, res: express.Response) => {
+    // Handle get user
+    const userId = req.params.userId;
+    if (typeof userId !== "string") {
+      return res.sendStatus(400);
+    }
+    const maybeUser = userStore.getUserById(userId);
+    if (maybeUser) {
+      return res.json(maybeUser);
+    } else {
+      return res.sendStatus(404);
+    }
+  });
+
+  return router;
+};
+```
+
+The router exposes `POST /` and `GET /:userId` routes for creating and fetching users, respectively. Remember the router is mounted to `/users`, so the routes translate to `POST /users` and `GET /users/:userId` routes at top-level.
+
+Create user request is handled by first validating the user input. Creating a new user is then delegated to `userStore.createUser` and the created `User` object is send back to the user as JSON.
+
+Fetching a user proceeds similarly: the user ID given in the route must be a string, after which a user is fetched from `userStore.getUserbyId`. The store returns `undefined` if the user is not found, so that's converted to a response with status code 404.
+
+## Running Kafka
 
 ### HTTP traffic is valuable
 
