@@ -2,8 +2,10 @@
 # yarn lockfile v1
 
 
-"@meeshkanml/express-middleware@file:../express-middleware":
-  version "0.0.3"
+"@meeshkanml/express-middleware@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@meeshkanml/express-middleware/-/express-middleware-0.0.4.tgz#e5d3e3b7ac8c1acfb363491874ee7bb78bd19f70"
+  integrity sha512-9CbE+NjzSnjpY00tRpU/FQkMdCmLRppfgMadg5CAMXhvD8anPJHzomn3lDeX8vQ/CDEk5TobgTK1lEw35atW1w==
   dependencies:
     express "^4.17.1"
     http-types "^0.5.0"
