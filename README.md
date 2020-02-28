@@ -23,7 +23,7 @@ $ npm install
 If you have Docker, start local Kafka cluster with one Zookeeper and Kafka node using Docker compose:
 
 ```bash
-$ docker-compose -f zk-single-kafka-single.yml up -d
+$ docker-compose up -d
 ```
 
 Alternatively, if you have Kafka installed, start Zookeeper and Kafka as instructed in [Kafka documentation](https://kafka.apache.org/quickstart#quickstart_startserver).
@@ -84,7 +84,7 @@ $ meeshkan build --source kafka -o my_spec
 Finally, close the Express server and tear down Docker:
 
 ```bash
-$ docker-compose -f zk-single-kafka-single.yml down
+$ docker-compose down
 ```
 
 ## Miscellaneous
