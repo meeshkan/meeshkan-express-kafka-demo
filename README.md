@@ -59,8 +59,6 @@ $ kafkacat -b localhost:9092 -t http_recordings -C
 Start making calls to the server and see traffic being recorded in Kafka:
 
 ```bash
-# Try get a user with invalid id
-curl http://localhost:3000/users/does-not-exist
 # Create a user with POST /users
 $ curl -X POST -d '{"name": "Kimmo", "email": "kimmo@example.com" }' -H "Content-Type: application/json" http://localhost:3000/users
 # Get user with GET /users/{id}
