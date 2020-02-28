@@ -13,7 +13,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@meeshkanml/express-middleware": "^0.0.4",
+    "@meeshkanml/express-middleware": "^0.0.5",
     "@meeshkanml/http-types-kafka": "^0.0.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
