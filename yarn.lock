@@ -2,25 +2,24 @@
 # yarn lockfile v1
 
 
-"@meeshkanml/express-middleware@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@meeshkanml/express-middleware/-/express-middleware-0.0.5.tgz#f847d3d8969ef859665a15f888346f2baf37f563"
-  integrity sha512-uitsWQoEyS41LjIq76Om+Bslaa+7euw75pvw8RU4OrdoLgRQM6tt5hAKbDfheR6KQv7IiPUWFet/mFOvRBFm2w==
+"@meeshkanml/express-middleware@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@meeshkanml/express-middleware/-/express-middleware-0.0.6.tgz#121102bf30c11b0f30324ad1d885deaf976855a3"
+  integrity sha512-g2ucc/qZLCV8jBrXJUIQuzQTp8hSQf1KnWyPwMG+dxAUMpU5cnChiyMwsApebW/3VftqbsIBvhNMHIbBnMAjeA==
   dependencies:
     express "^4.17.1"
-    http-types "^0.5.0"
+    http-types "^0.6.1"
 
-"@meeshkanml/http-types-kafka@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@meeshkanml/http-types-kafka/-/http-types-kafka-0.0.0.tgz#6610512446308b3f2d7720e4e37f67632a4dbfeb"
-  integrity sha512-Os7DVDahBEWrxsLw7UGXjX6C6goN6iRyOtq4fTqM/oWj7vHSGLV4oathX5Ay7t4+6Fnao2B1m35jQQesrmU9ag==
+"@meeshkanml/http-types-kafka@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@meeshkanml/http-types-kafka/-/http-types-kafka-0.0.2.tgz#bd5103db65340f29647769bdae913e6df877c746"
+  integrity sha512-Y/7XhqAyYMW0CmUitojVHrD87/0XJ4tJBPIt6Ct+ErIg5n3Ep2Alo7+0MAfMf1OA7gW35Zr+CWMF7Mt+/jFmcw==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
     "@oclif/plugin-help" "^2"
     debug "^4.1.1"
-    http-types "^0.5.0"
-    kafkajs "^1.12.0"
+    http-types "^0.6.1"
     tslib "^1"
 
 "@oclif/command@^1", "@oclif/command@^1.5.13":
@@ -432,10 +431,10 @@ http-errors@~1.7.2:
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
-http-types@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/http-types/-/http-types-0.5.0.tgz#9e02637d2e7454e46550e2568527bb3af1dd3b40"
-  integrity sha512-miAWi7LdP3eONtxVC5Q0Co2kq2AR35JLavMtW6Pja17O4oywUL1Jctnex/qEuL98LedTfMugtGDU21ABHuEjgw==
+http-types@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/http-types/-/http-types-0.6.1.tgz#75dd6c92e4c31257d69f2863bb3c36a5a30e7c09"
+  integrity sha512-bSv8ud2IM0Kcnx0UOJLS0LHqATtetz+WNh54rlsUFLxuvwu4hSuOaALldTecGJVr8kngL+3XS7GUUMG0Ddaq/g==
 
 iconv-lite@0.4.24:
   version "0.4.24"
