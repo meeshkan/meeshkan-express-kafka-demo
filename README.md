@@ -6,7 +6,7 @@ An example [express](https://expressjs.com/) server using [Mem express middlewar
 
 1. [**Node.js**](https://nodejs.org/en/download/) >= 8.0 and optionally [**yarn**](https://yarnpkg.com/)
 1. Either [**Docker**](https://docs.docker.com/) or [**Kafka**](https://kafka.apache.org/quickstart#quickstart_download) installation
-1. Optional: **[Python](https://www.python.org/) 3.6+** and [**pip**](https://pip.pypa.io/en/stable/installing/) if building OpenAPI specification with [meeshkan](https://github.com/meeshkan/meeshkan)
+1. Optional: **[Python](https://www.python.org/) 3.6+** and [**pip**](https://pip.pypa.io/en/stable/installing/) if building OpenAPI specification with [mem](https://github.com/meeshkan/mem)
 
 ## Instructions
 
@@ -15,8 +15,8 @@ An example [express](https://expressjs.com/) server using [Mem express middlewar
 First, clone the repository and navigate inside it:
 
 ```bash
-git clone https://github.com/meeshkan/meeshkan-express-kafka-demo.git
-cd meeshkan-express-kafka-demo
+git clone https://github.com/meeshkan/mem-express-kafka-demo.git
+cd mem-express-kafka-demo
 ```
 
 Install Express server dependencies:
@@ -95,19 +95,19 @@ $ curl http://localhost:3000/users/5720862f-9534-4d97-8afe-c07f38a728b7
 
 ### Creating an OpenAPI specification
 
-To create an OpenAPI specification from recordings, install [`meeshkan`](https://pypi.org/project/meeshkan/):
+To create an OpenAPI specification from recordings, install [`mem`](https://pypi.org/project/mem/):
 
 ```bash
-$ pip install meeshkan
+$ pip install mem
 ```
 
 Then, run the following command:
 
 ```bash
-$ meeshkan build --source kafka -o my_spec
+$ mem build --source kafka -o my_spec
 ```
 
-> _Note: This instructs `meeshkan` to write the OpenAPI specification to the `my_spec/` directory._
+> _Note: This instructs `mem` to write the OpenAPI specification to the `my_spec/` directory._
 
 ### Shutting down the server and Kafka cluster
 
