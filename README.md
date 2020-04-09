@@ -1,6 +1,6 @@
-# Express + HTTP Types + Kafka + Meeshkan
+# Express + HTTP Types + Kafka + Mem
 
-An example [express](https://expressjs.com/) server using [Meeshkan express middleware](https://github.com/Meeshkan/express-middleware) to record HTTP traffic to [Kafka](https://kafka.apache.org/).
+An example [express](https://expressjs.com/) server using [Mem express middleware](https://github.com/meeshkan/express-middleware) to record HTTP traffic to [Kafka](https://kafka.apache.org/).
 
 ## Prerequisites
 
