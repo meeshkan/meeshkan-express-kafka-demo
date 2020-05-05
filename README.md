@@ -1,12 +1,14 @@
 # Express + HTTP Types + Kafka + Meeshkan
 
-An example [express](https://expressjs.com/) server using [Meeshkan express middleware](https://github.com/Meeshkan/express-middleware) to record HTTP traffic to [Kafka](https://kafka.apache.org/).
+An example [express](https://expressjs.com/) server using [Meeshkan express middleware](https://github.com/meeshkan/express-middleware) to record HTTP traffic to [Kafka](https://kafka.apache.org/).
+
+The full tutorial associated with this repository is available on the Meeshkan blog: [Building a real-time HTTP traffic stream with Apache Kafka](https://meeshkan.com/blog/building-a-real-time-http-traffic-stream-with-apache-kafka/).
 
 ## Prerequisites
 
 1. [**Node.js**](https://nodejs.org/en/download/) >= 8.0 and optionally [**yarn**](https://yarnpkg.com/)
 1. Either [**Docker**](https://docs.docker.com/) or [**Kafka**](https://kafka.apache.org/quickstart#quickstart_download) installation
-1. Optional: **[Python](https://www.python.org/) 3.6+** and [**pip**](https://pip.pypa.io/en/stable/installing/) if building OpenAPI specification with [meeshkan](https://github.com/meeshkan/meeshkan)
+1. Optional: **[Python](https://www.python.org/) 3.6+** and [**pip**](https://pip.pypa.io/en/stable/installing/) if building an OpenAPI specification with our [HTTP Mocking Toolkit (HMT)](https://github.com/meeshkan/hmt)
 
 ## Instructions
 
@@ -91,23 +93,23 @@ $ curl -X POST -d '{"name": "Kimmo", "email": "kimmo@example.com" }' -H "Content
 $ curl http://localhost:3000/users/5720862f-9534-4d97-8afe-c07f38a728b7
 ```
 
-> _Note: The recorded traffic logs are in the [HTTP Types](https://meeshkan.github.io/http-types/) format._
+> _Note: The recorded traffic logs are in the [HTTP Types](https://github.com/meeshkan/http-types/) format._
 
 ### Creating an OpenAPI specification
 
-To create an OpenAPI specification from recordings, install [`meeshkan`](https://pypi.org/project/meeshkan/):
+To create an OpenAPI specification from recordings, install [`hmt`](https://pypi.org/project/hmt/):
 
 ```bash
-$ pip install meeshkan
+$ pip install hmt
 ```
 
 Then, run the following command:
 
 ```bash
-$ meeshkan build --source kafka -o my_spec
+$ hmt build --source kafka -o my_spec
 ```
 
-> _Note: This instructs `meeshkan` to write the OpenAPI specification to the `my_spec/` directory._
+> _Note: This instructs `hmt` to write the OpenAPI specification to the `my_spec/` directory._
 
 ### Shutting down the server and Kafka cluster
 
